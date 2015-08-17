@@ -16,6 +16,23 @@ def setup():
     game.players=int(raw_input("Players? (1-6): "))
   game.totaldice=5*game.players
 
+def calculatebest(chancesingle,mindice):
+  """
+  Calculates the best bet in a game
+  """
+
+  bestbet=[0,0]
+  for j in range(1,game.totaldice+1):
+    totalprob=0
+    for l in range(j,game.totaldice+1):
+      outcomes=math.factorial(game.totaldice)/(math.factorial(l)*math.factorial(game.totaldice-l))
+      prob=outcomes*(chancesingle**l)*((1-chancesingle)**(game.totaldice-l))
+      totalprob+=prob
+    bestbet=[j,totalprob] if totalprob>bestbet[0] and j>mindice else bestbet
+  return bestbet
+
+
+
 def checkbet(pal,bet):
   """
   Receives a bet (<number of dice>x<value of dice>) and outputs the chances of it being right.
@@ -36,8 +53,8 @@ def checkbet(pal,bet):
     totalprob+=prob
   
   print "Chance of rolling %s is %f"%(bet,totalprob)
-  print "\n"
-
+  bestbet=calculatebest(chancesingle,betdices)
+  print "Best bet is %i dice (P=%f)"%(bestbet[0],bestbet[1])
 
   raw_input("Press enter for next round")
 
